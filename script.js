@@ -8,8 +8,6 @@ let start = document.getElementById("start");
 
 start.onclick = startGame;
 
-
-
 const NUMBER_OF_MOVES = 10;
 const DIRECTION = {
 	1: "left",
@@ -34,16 +32,22 @@ function selectOneFrom(list) {
 }
 
 function clickOnField(ev) {
-    if (ev.target.dataset.position === `${currentCoords.x}${currentCoords.y}`) {
-        elementCollection.find(elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`).innerHTML = `<img src="img/correct.png" width="150" height="150">`
-    } else {
-        ev.target.innerHTML = `<img src="img/wrong.png" width="150" height="150">`;
-        elementCollection.find(elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`).innerHTML = `<img src="img/star.png" width="150" height="150">`
-    }
-    elementCollection.forEach(elem =>
-        elem.removeEventListener("click", clickOnField)
-    );
-    setTimeout(()=> startGame(), 3000)
+	if (ev.target.dataset.position === `${currentCoords.x}${currentCoords.y}`) {
+		elementCollection.find(
+			elem =>
+				elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
+		).innerHTML = `<img src="img/correct.png" width="100" height="100">`;
+	} else {
+		ev.target.innerHTML = `<img src="img/wrong.png" width="100" height="100">`;
+		elementCollection.find(
+			elem =>
+				elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
+		).innerHTML = `<img src="img/star.png" width="100" height="100">`;
+	}
+	elementCollection.forEach(elem =>
+		elem.removeEventListener("click", clickOnField)
+	);
+	setTimeout(() => startGame(), 3000);
 }
 
 function changePosition(direction, coords) {
@@ -61,8 +65,6 @@ function changePosition(direction, coords) {
 	}
 }
 
-
-
 function getDirection() {
 	switch (`${currentCoords.x}${currentCoords.y}`) {
 		case "00":
@@ -74,9 +76,9 @@ function getDirection() {
 		case "20":
 			return selectOneFrom([3, 4]);
 		case "01":
-			return selectOneFrom([1,2, 3]);
+			return selectOneFrom([1, 2, 3]);
 		case "12":
-			return selectOneFrom([1,2, 4]);
+			return selectOneFrom([1, 2, 4]);
 		case "21":
 			return selectOneFrom([1, 3, 4]);
 		case "10":
@@ -87,21 +89,33 @@ function getDirection() {
 }
 
 function startGame() {
-    elementCollection.forEach(elem => elem.innerHTML = "");
-    stepsCollection.forEach(elem => elem.innerHTML = "")
-    elementCollection.find(
-		elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
-	).innerHTML = `<img src="img/start.png" width="150" height="150">`;
-    let i = 1;
-    let timer = setInterval(function() {
-	let direction = DIRECTION[getDirection()];
-    stepsCollection[i-1].innerHTML = `<img src="img/${direction}.png" width="50" height="50">`
-	currentCoords = changePosition(direction, currentCoords);
-	if (++i > 10) {
-        elementCollection.forEach(elem =>
-            elem.addEventListener("click", clickOnField)
+    start.disabled = true;
+	elementCollection.forEach(elem => {
+        elem.innerHTML = ""
+        elem.classList.toggle("ready")
+        document.querySelector(".game-field").classList.toggle("ready");
+    }
         );
-		clearInterval(timer);
-	}
-}, 1000);
+	stepsCollection.forEach(elem => (elem.innerHTML = ""));
+	elementCollection.find(
+		elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
+	).innerHTML = `<img src="img/start.png" width="50" height="50">`;
+	let i = 1;
+	let timer = setInterval(function() {
+		let direction = DIRECTION[getDirection()];
+		stepsCollection[
+			i - 1
+		].innerHTML = `<img src="img/${direction}.png" width="40" height="40">`;
+		currentCoords = changePosition(direction, currentCoords);
+		if (++i > 10) {
+
+			elementCollection.forEach(elem => {
+                elem.addEventListener("click", clickOnField)
+                elem.classList.toggle("ready")
+                document.querySelector(".game-field").classList.toggle("ready");
+            }
+			);
+			clearInterval(timer);
+		}
+	}, 1000);
 }
