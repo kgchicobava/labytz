@@ -1,10 +1,10 @@
-let blocks = document.querySelectorAll(".block");
-let elementCollection = Array.from(blocks);
+const blocks = document.querySelectorAll(".block");
+const steps = document.querySelectorAll(".step");
 
-let steps = document.querySelectorAll(".step");
-let stepsCollection = Array.from(steps);
+const elementCollection = Array.from(blocks);
+const stepsCollection = Array.from(steps);
 
-let start = document.getElementById("start");
+const start = document.getElementById("start");
 
 start.onclick = startGame;
 
@@ -15,28 +15,30 @@ const DIRECTION = {
 	3: "right",
 	4: "up"
 };
-let currentCoords = getStartPosition();
 
+// Getting coordinates for starting point
+const getStartPosition = () => ({
+    x: getRandomInt(0, 2),
+	y: getRandomInt(0, 2)
+});
+let currentCoords = getStartPosition();
+// returns random value from allowed list
+const selectOneFrom = list => list[Math.floor(Math.random() * list.length)];
+// returns random value in range of min and max INCLUDING
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-function getStartPosition() {
-	let coords = { x: getRandomInt(0, 2), y: getRandomInt(0, 2) };
-	return { ...coords };
-}
-
-function selectOneFrom(list) {
-	return list[Math.floor(Math.random() * list.length)];
-}
 
 function clickOnField(ev) {
+	// if clicked block is correct show success sign
 	if (ev.target.dataset.position === `${currentCoords.x}${currentCoords.y}`) {
 		elementCollection.find(
 			elem =>
 				elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
 		).innerHTML = `<img src="img/correct.png" width="100" height="100">`;
+		// if no, show where was correct and wrong sign
 	} else {
 		ev.target.innerHTML = `<img src="img/wrong.png" width="100" height="100">`;
 		elementCollection.find(
@@ -44,12 +46,14 @@ function clickOnField(ev) {
 				elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
 		).innerHTML = `<img src="img/star.png" width="100" height="100">`;
 	}
+	// remove listeners so user unable click while game running
 	elementCollection.forEach(elem =>
 		elem.removeEventListener("click", clickOnField)
 	);
+	// after 3 seconds start game again
 	setTimeout(() => startGame(), 3000);
 }
-
+// depending on direction, change coordinates
 function changePosition(direction, coords) {
 	switch (direction) {
 		case "left":
@@ -64,9 +68,9 @@ function changePosition(direction, coords) {
 			return coords;
 	}
 }
-
-function getDirection() {
-	switch (`${currentCoords.x}${currentCoords.y}`) {
+// gets direction. prevents for creating coordinates that are not in range of field
+function getDirection(coordinates) {
+	switch (`${coordinates.x}${coordinates.y}`) {
 		case "00":
 			return selectOneFrom([2, 3]);
 		case "02":
@@ -87,34 +91,37 @@ function getDirection() {
 			return getRandomInt(1, 4);
 	}
 }
-
+// starts timeout function and calculates coordinates on each step
 function startGame() {
     start.disabled = true;
+
 	elementCollection.forEach(elem => {
-        elem.innerHTML = ""
-        elem.classList.toggle("ready")
-        document.querySelector(".game-field").classList.toggle("ready");
-    }
-        );
-	stepsCollection.forEach(elem => (elem.innerHTML = ""));
-	elementCollection.find(
+		elem.innerHTML = "";
+		elem.classList.toggle("ready");
+		document.querySelector(".game-field").classList.toggle("ready");
+	});
+
+    stepsCollection.forEach(elem => (elem.innerHTML = ""));
+
+    elementCollection.find(
 		elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
 	).innerHTML = `<img src="img/start.png" width="50" height="50">`;
-	let i = 1;
-	let timer = setInterval(function() {
-		let direction = DIRECTION[getDirection()];
+
+    let i = 1;
+    const timer = setInterval(function() {
+		let direction = DIRECTION[getDirection(currentCoords)];
 		stepsCollection[
 			i - 1
 		].innerHTML = `<img src="img/${direction}.png" width="40" height="40">`;
-		currentCoords = changePosition(direction, currentCoords);
-		if (++i > 10) {
 
+        currentCoords = changePosition(direction, currentCoords);
+
+        if (++i > NUMBER_OF_MOVES) {
 			elementCollection.forEach(elem => {
-                elem.addEventListener("click", clickOnField)
-                elem.classList.toggle("ready")
-                document.querySelector(".game-field").classList.toggle("ready");
-            }
-			);
+				elem.addEventListener("click", clickOnField);
+				elem.classList.toggle("ready");
+				document.querySelector(".game-field").classList.toggle("ready");
+			});
 			clearInterval(timer);
 		}
 	}, 1000);
