@@ -18,7 +18,7 @@ const DIRECTION = {
 
 // Getting coordinates for starting point
 const getStartPosition = () => ({
-    x: getRandomInt(0, 2),
+	x: getRandomInt(0, 2),
 	y: getRandomInt(0, 2)
 });
 let currentCoords = getStartPosition();
@@ -93,7 +93,7 @@ function getDirection(coordinates) {
 }
 // starts timeout function and calculates coordinates on each step
 function startGame() {
-    start.disabled = true;
+	start.disabled = true;
 
 	elementCollection.forEach(elem => {
 		elem.innerHTML = "";
@@ -101,22 +101,22 @@ function startGame() {
 		document.querySelector(".game-field").classList.toggle("ready");
 	});
 
-    stepsCollection.forEach(elem => (elem.innerHTML = ""));
+	stepsCollection.forEach(elem => (elem.innerHTML = ""));
 
-    elementCollection.find(
+	elementCollection.find(
 		elem => elem.dataset.position === `${currentCoords.x}${currentCoords.y}`
 	).innerHTML = `<img src="img/start.png" width="50" height="50">`;
 
-    let i = 1;
-    const timer = setInterval(function() {
+	let i = 1;
+	const timer = setInterval(function() {
 		let direction = DIRECTION[getDirection(currentCoords)];
 		stepsCollection[
 			i - 1
 		].innerHTML = `<img src="img/${direction}.png" width="40" height="40">`;
 
-        currentCoords = changePosition(direction, currentCoords);
+		currentCoords = changePosition(direction, currentCoords);
 
-        if (++i > NUMBER_OF_MOVES) {
+		if (++i > NUMBER_OF_MOVES) {
 			elementCollection.forEach(elem => {
 				elem.addEventListener("click", clickOnField);
 				elem.classList.toggle("ready");

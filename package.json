@@ -1,0 +1,21 @@
+{
+  "name": "laby",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gh-pages -d ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kgchicobava/labytz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://kgchicobava.github.io/labytz",
+  "dependencies": {
+    "gh-pages": "^2.0.1"
+  }
+}
